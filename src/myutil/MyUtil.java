@@ -8,9 +8,23 @@ public class MyUtil {
     private static final int INT = 0;
     private static final int STRING = 1;
 
-//    public static void main(String[] args) {
-//
-//    }
+    //    public static void main(String[] args) {
+    //
+    //    }
+
+    public static int binarySearch(int value, int[] array, int start, int end) {
+        if (start > end) {
+            return -1;
+        }
+        int mid = (start + end) / 2;
+        if (value == array[mid]) {
+            return mid;
+        } else if (array[mid] < value) {
+            return binarySearch(value, array, mid + 1, end);
+        } else {
+            return binarySearch(value, array, start, mid - 1);
+        }
+    }
 
     public static int[] lineToIntArray(String line) {
         StringTokenizer st = new StringTokenizer(line);
