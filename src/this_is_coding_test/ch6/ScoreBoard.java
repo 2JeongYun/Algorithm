@@ -47,7 +47,12 @@ public class ScoreBoard {
 
         @Override
         public int compareTo(Student otherStudent) {
-            return (otherStudent.score > score) ? -1 : 1;
+            if (otherStudent.score > score)
+                return -1;
+            else if (otherStudent.score == score)
+                return 0;
+            else
+                return 1;
         }
 
         @Override

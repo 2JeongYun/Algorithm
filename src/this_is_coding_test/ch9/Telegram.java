@@ -91,10 +91,12 @@ public class Telegram {
 
         @Override
         public int compareTo(Node other) {
-            if (other.weight < this.weight) {
+            if (other.weight < this.weight)
                 return 1;
-            }
-            return 0;
+            else if (other.weight == this.weight)
+                return 0;
+            else
+                return -1;
         }
     }
 
