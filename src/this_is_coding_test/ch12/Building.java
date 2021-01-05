@@ -1,44 +1,47 @@
 package this_is_coding_test.ch12;
 
+import java.util.Arrays;
+
 public class Building {
-    final int STICK = 0;
-    final int BOARD = 1;
-    final int ALL = 2;
-    final int INSERT = 1;
-    final int DELETE = 0;
+    final int NONE = -1;
+    final int PILLAR = 0;
+    final int FLOOR = 1;
+    final int BOTH = 2;
+    final int CONSTRUCT = 1;
+    final int[] dx = {0, 1, 0, -1, 0};
+    final int[] dy = {1, 0, -1, 0, 0};
 
     public int[][] solution(int n, int[][] build_frame) {
         int[][] answer = {};
-        int[][] wall = new int[n][n];
+        int[][] wall = new int[n + 3][n + 3];
         int structureCnt = 0;
 
-
-        for (int i = 0; i < build_frame.length; i++) {
-            build(wall, build_frame[i]);
+        for (int i = 0; i < wall.length; i++) {
+            Arrays.fill(wall[i], -1);
         }
 
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                if (wall[i][j] != -1) {
+        for (int i = 0; i < build_frame.length; i++) {
+            if (build_frame[i][3] == CONSTRUCT) {
+                if (construct(wall, build_frame[i])) {
                     structureCnt++;
-                    if (wall[i][j] == ALL) {
-                        structureCnt++;
-                    }
+                }
+            } else {
+                if (destruct(wall, build_frame[i])) {
+                    structureCnt--;
                 }
             }
         }
 
         answer = new int[structureCnt][3];
-        structureCnt = 0;
-        for (int i = 0; i < 0; i++) {
-            for (int j = 0; j < 0; j++) {
-                if (wall[i][j] != -1) {
-                    if (wall[i][j] == ALL) {
-                        answer[structureCnt++] = new int[] {j, i, 0};
-                        answer[structureCnt++] = new int[] {j, i, 1};
-                    } else {
-                        answer[structureCnt++] = new int[] {j, i, wall[i][j]};
-                    }
+        int answerIdx = 0;
+
+        for (int i = 1; i < n + 2; i++) {
+            for (int j = 1; j < n + 2; j++) {
+                if (wall[j][i] == BOTH) {
+                    answer[answerIdx++] = new int[] {i - 1, j - 1, 0};
+                    answer[answerIdx++] = new int[] {i - 1, j - 1, 1};
+                } else if (wall[j][i] != NONE) {
+                    answer[answerIdx++] = new int[] {i - 1, j - 1, wall[j][i]};
                 }
             }
         }
@@ -46,113 +49,121 @@ public class Building {
         return answer;
     }
 
-    public boolean build(int[][] wall, int[] command) {
-        int x = command[0];
-        int y = command[1];
-        int type = command[2];
-        int order = command[3];
-        int cur;
+    public boolean destruct(int[][] wall, int[] order) {
+        int x = order[0] + 1;
+        int y = order[1] + 1;
+        int type = order[2];
 
-        cur = wall[y][x];
-        if (order == DELETE) {
-            if (type == STICK) {
-                if (cur == ALL) {
-                    wall[y][x] = BOARD;
-                } else {
-                    wall[y][x] = -1;
-                }
-            } else if (type == BOARD) {
-                if (cur == ALL) {
-                    wall[y][x] = STICK;
-                } else {
-                    wall[y][x] = -1;
-                }
-            }
-        } else if (order == INSERT) {
-            if (type == STICK) {
-                if (cur == BOARD) {
-                    wall[y][x] = ALL;
-                } else {
-                    wall[y][x] = STICK;
-                }
-            } else if (type == BOARD) {
-                if (cur == BOARD) {
-                    wall[y][x] = ALL;
-                } else {
-                    wall[y][x] = BOARD;
-                }
-            }
-        }
-
-        if (check(wall, x, y, wall[y][x])) {
+        if (canDestruct(wall, x, y, type)) {
+            wall[y][x] = (wall[y][x] == BOTH) ? ((type == PILLAR) ? FLOOR : PILLAR) : NONE;
             return true;
-        } else {
-            wall[y][x] = cur;
-            return false;
         }
+
+        return false;
     }
 
-    public boolean check(int[][] wall, int x, int y, int type) {
-        switch (type) {
-            case STICK:
-                if (y == 0) {
-                    return true;
-                } else if (isEndPoint(wall, x, y)) {
-                    return true;
-                } else if (isSupportedByStick(wall, x, y)) {
-                    return true;
+    public boolean canDestruct(int[][] wall, int x, int y, int dType) {
+        boolean ret = true;
+        int cur = wall[y][x];
+
+        wall[y][x] = (cur == BOTH) ? ((dType == PILLAR) ? FLOOR : PILLAR) : NONE;
+        for (int i = 0; i < wall.length; i++) {
+            for (int j = 0; j < wall.length; j++) {
+                int otherSpace = wall[i][j];
+                if (otherSpace == -1) {
+                    continue;
                 }
-            case BOARD:
-                if (isEndPoint(wall, x, y) && isSupportedByStick(wall, x, y)) {
-                    return true;
-                } else if (x > 0 && x < wall.length && isBoard(wall[y][x - 1]) && isBoard(wall[y][x + 1])) {
-                    return true;
+                if (isFloor(otherSpace)) {
+                    if (!canExistFloor(wall, j, i)) {
+                        ret = false;
+                    }
                 }
-            case ALL:
-                if (check(wall, x, y, STICK) && check(wall, x, y, BOARD)) {
-                    return true;
+                if (isPillar(otherSpace)) {
+                    if (!canExistPillar(wall, j, i)) {
+                        ret = false;
+                    }
                 }
+
+                wall[i][j] = otherSpace;
+            }
+        }
+
+        wall[y][x] = cur;
+
+        return ret;
+    }
+
+    public boolean construct(int[][] wall, int[] order) {
+        int x = order[0] + 1;
+        int y = order[1] + 1;
+        int type = order[2];
+
+        if (type == PILLAR) {
+            if (canExistPillar(wall, x, y)) {
+                if (wall[y][x] != -1) {
+                    wall[y][x] = BOTH;
+                } else {
+                    wall[y][x] = PILLAR;
+                }
+                return true;
+            }
+        } else {
+            if (canExistFloor(wall, x, y)) {
+                if (wall[y][x] != -1) {
+                    wall[y][x] = BOTH;
+                } else {
+                    wall[y][x] = FLOOR;
+                }
+                return true;
+            }
         }
         return false;
     }
 
-    public boolean isSupportedByStick(int[][] wall, int x, int y) {
-        boolean under = true;
-        if (y - 1 < 0 || !isSTICK(wall[y - 1][x])) {
-            under = false;
+    public boolean canExistPillar(int[][] wall, int x, int y) {
+        int under = wall[y - 1][x];
+        int bottom = 1;
+
+        if (y == bottom || under == PILLAR || under == BOTH || isEndPoint(wall, x, y)) {
+            return true;
         }
-        return under;
+        return false;
+    }
+
+    public boolean canExistFloor(int[][] wall, int x, int y) {
+        int under = wall[y - 1][x];
+        int underRight = wall[y - 1][x + 1];
+        int right = wall[y][x + 1];
+        int left = wall[y][x - 1];
+
+        if ((isFloor(left) && isFloor(right)) ||
+                (isPillar(under)) ||
+                (isPillar(underRight))) {
+            return true;
+        }
+
+        return false;
     }
 
     public boolean isEndPoint(int[][] wall, int x, int y) {
-        boolean left = true;
-        boolean cur = true;
+        int left = wall[y][x - 1];
+        int cur = wall[y][x];
 
-        if (x - 1 < 0 || !isBoard(wall[y][x - 1])) {
-            left = false;
-        }
-        if (!isBoard(wall[y][x])) {
-            cur = false;
-        }
-
-        if (left && !cur) {
-            return true;
-        } else if (!left && cur) {
-            return true;
-        }
-
-        return false;
-    }
-
-    public boolean isSTICK(int type) {
-        if (type == STICK || type == ALL) {
+        if (isFloor(left) || isFloor(cur)) {
             return true;
         }
         return false;
     }
 
-    public boolean isBoard(int type) {
-        if (type == BOARD || type == ALL) {
+    public boolean isPillar(int type) {
+        if (type == PILLAR || type == BOTH) {
+            return true;
+        }
+        return false;
+    }
+
+    public boolean isFloor(int type) {
+        if (type == FLOOR || type == BOTH) {
             return true;
         }
         return false;
@@ -160,6 +171,15 @@ public class Building {
 
     public static void main(String[] args) {
         Building b = new Building();
-        //b.solution();
+        int[][] test = {{1, 0, 0, 1}, {1, 1, 1, 1}, {2, 1, 0, 1}, {2, 2, 1, 1}, {5, 0, 0, 1},
+                {5, 1, 0, 1}, {4, 2, 1, 1}, {3, 2, 1, 1}};
+        int[][] test2 = {{0, 0, 0, 1}, {2, 0, 0, 1}, {4, 0, 0, 1}, {0, 1, 1, 1}, {1, 1, 1, 1},
+                {2, 1, 1, 1}, {3, 1, 1, 1}, {2, 0, 0, 0}, {1, 1, 1, 0}, {2, 2, 0, 1}};
+        int n = 5;
+        int[][] answer = b.solution(n, test);
+        for (int i = 0; i < answer.length; i++) {
+            System.out.printf("answer-----\n%d %d %d\n", answer[i][0], answer[i][1], answer[i][2]);
+        }
     }
 }
+
