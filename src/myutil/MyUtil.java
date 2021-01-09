@@ -9,10 +9,6 @@ public class MyUtil {
     private static final int INT = 0;
     private static final int STRING = 1;
 
-    //    public static void main(String[] args) {
-    //
-    //    }
-
     public static int binarySearch(int value, int[] array, int start, int end) {
         if (start > end) {
             return -1;
@@ -99,4 +95,31 @@ public class MyUtil {
             }
         }
     }
+
+    public static void getCombinations(int n, int r, int curNum, ArrayList<ArrayList<Integer>> result, ArrayList<Integer> cur) {
+        if (cur.size() == r) {
+            ArrayList<Integer> arr = (ArrayList<Integer>) cur.clone();
+            result.add(arr);
+            return;
+        } else if (curNum >= n) {
+            return;
+        }
+
+        cur.add(curNum);
+        getCombinations(n, r, curNum + 1, result, cur);
+        cur.remove((Integer) curNum);
+        getCombinations(n, r, curNum + 1, result, cur);
+        return;
+    }
+
+//    public static void main(String[] args) {
+//        ArrayList<ArrayList<Integer>> arr = new ArrayList<>();
+//        getCombination(5, 3, 0, arr, new ArrayList<>());
+//        for (ArrayList<Integer> nums : arr) {
+//            for (int i : nums) {
+//                System.out.printf("%d ", i);
+//            }
+//            System.out.println();
+//        }
+//    }
 }
