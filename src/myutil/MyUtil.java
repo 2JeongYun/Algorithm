@@ -2,6 +2,7 @@ package myutil;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.StringTokenizer;
 
 public class MyUtil {
@@ -79,5 +80,23 @@ public class MyUtil {
         }
 
         return ret;
+    }
+
+    public static void getPermutations(int n, int r, int depth, ArrayList<ArrayList<Integer>> result, ArrayList<Integer> cur, boolean visit[]) {
+        if (depth == r) {
+            ArrayList<Integer> arr = (ArrayList<Integer>) cur.clone();
+            result.add(arr);
+            return;
+        }
+
+        for (int i = 0; i < n; i++) {
+            if (!visit[i]) {
+                visit[i] = true;
+                cur.add(i);
+                getPermutations(n, r, depth + 1, result, cur, visit);
+                cur.remove((Integer) i);
+                visit[i] = false;
+            }
+        }
     }
 }
