@@ -96,19 +96,18 @@ public class MyUtil {
         }
     }
 
-    public static void getCombinations(int n, int r, int curNum, ArrayList<ArrayList<Integer>> result, ArrayList<Integer> cur) {
+    public static void getCombinations(int n, int r, int depth, ArrayList<ArrayList<Integer>> result, ArrayList<Integer> cur) {
         if (cur.size() == r) {
             ArrayList<Integer> arr = (ArrayList<Integer>) cur.clone();
             result.add(arr);
             return;
-        } else if (curNum >= n) {
-            return;
         }
 
-        cur.add(curNum);
-        getCombinations(n, r, curNum + 1, result, cur);
-        cur.remove((Integer) curNum);
-        getCombinations(n, r, curNum + 1, result, cur);
+        for (int val = depth; val < n; val++) {
+            cur.add(val);
+            getCombinations(n, r, val + 1, result, cur);
+            cur.remove((Integer) val);
+        }
         return;
     }
 
