@@ -13,7 +13,6 @@ public class Immigration {
         BufferedReader br = new BufferedReader(new FileReader("./src/this_is_coding_test/ch13/input.txt"));
         StringTokenizer st;
 
-        int moveCnt = 0;
         int[][] map;
         int n, l, r;
 
@@ -29,13 +28,67 @@ public class Immigration {
                 map[y][x] = Integer.parseInt(st.nextToken());
             }
         }
+
+        int answer = 0;
+        while (doImmigration(map, l, r)) {
+            answer++;
+        }
+        System.out.println(answer);
     }
 
-    ArrayList<Pair> getUnion(int[][] map, Pair country, boolean[][] visit, int l, int r) {
-        ArrayList<Pair> result = new ArrayList<>();
-        result.add(new Pair(country.x, country.y));
+    private boolean doImmigration(int[][] map, int l, int r) {
+        ArrayList<ArrayList<Pair>> unions = new ArrayList<>();
+        boolean[][] visit = new boolean[map.length][map.length];
+        boolean isMove = false;
 
+        for (int y = 0; y < map.length; y++) {
+            for (int x = 0; x < map.length; x++) {
+                if (!visit[y][x]) {
+                    ArrayList<Pair> union = new ArrayList<>();
+                    setUnion(map, l, r, new Pair(x, y), visit, union);
+                    unions.add(union);
+                }
+            }
 
+            for (ArrayList<Pair> union : unions) {
+                if (union.size() > 1) {
+                    isMove = true;
+                }
+                int total = 0;
+                int population = 0;
+                for (Pair country : union) {
+                    total += map[country.y][country.x];
+                }
+                population = total / union.size();
+
+                for (Pair country : union) {
+                    map[country.y][country.x] = population;
+                }
+            }
+        }
+
+        return isMove;
+    }
+
+    private void setUnion(int[][] map, int l, int r, Pair country, boolean[][] visit, ArrayList<Pair> union) {
+        if (visit[country.y][country.x]) {
+            return;
+        }
+        visit[country.y][country.x] = true;
+        union.add(country);
+
+        for (int d = 0; d < 2; d++) {
+            int nextX = country.x + dx[d];
+            int nextY = country.y + dy[d];
+            if (nextX >= 0 && nextY >= 0 && nextX < map.length && nextY < map.length) {
+                int diff = Math.abs(map[nextY][nextX] - map[country.y][country.x]);
+                if (diff <= r && diff >= l) {
+                    setUnion(map, l, r, new Pair(nextX, nextY), visit, union);
+                }
+            }
+        }
+
+        return;
     }
 
     public class Pair {
@@ -45,6 +98,11 @@ public class Immigration {
         Pair(int x, int y) {
             this.x = x;
             this.y = y;
+        }
+
+        @Override
+        public String toString() {
+            return String.format("%d %d", x, y);
         }
     }
 
