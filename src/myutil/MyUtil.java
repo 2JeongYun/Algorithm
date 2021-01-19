@@ -3,6 +3,7 @@ package myutil;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.StringTokenizer;
 
 public class MyUtil {
@@ -111,14 +112,52 @@ public class MyUtil {
         return;
     }
 
+    public static void mergeSort(int[] arr, int left, int right) {
+        int mid = (right + left) / 2;
+
+        if (left >= right) {
+            return;
+        }
+
+        mergeSort(arr, left, mid);
+        mergeSort(arr, mid + 1, right);
+        merge(arr, left, mid, right);
+
+        return;
+    }
+
+    private static void merge(int[] arr, int left, int mid, int right) {
+        int[] temp = new int[right - left + 1];
+        int leftIdx = left;
+        int rightIdx = mid + 1;
+        int tempIdx = 0;
+
+        while (leftIdx <= mid && rightIdx <= right) {
+            if (arr[leftIdx] <= arr[rightIdx]) {
+                temp[tempIdx++] = arr[leftIdx++];
+            } else {
+                temp[tempIdx++] = arr[rightIdx++];
+            }
+        }
+
+        if (leftIdx == mid + 1) {
+            while (rightIdx <= right) {
+                temp[tempIdx++] = arr[rightIdx++];
+            }
+        } else {
+            while (leftIdx <= mid) {
+                temp[tempIdx++] = arr[leftIdx++];
+            }
+        }
+
+        for (int i = 0; i < temp.length; i++) {
+            arr[left + i] = temp[i];
+        }
+    }
+
 //    public static void main(String[] args) {
-//        ArrayList<ArrayList<Integer>> arr = new ArrayList<>();
-//        getCombination(5, 3, 0, arr, new ArrayList<>());
-//        for (ArrayList<Integer> nums : arr) {
-//            for (int i : nums) {
-//                System.out.printf("%d ", i);
-//            }
-//            System.out.println();
-//        }
+//        int[] arr = {5, 4, 3, 2, 1, -1, 5, 6, 10, 0};
+//        mergeSort(arr, 0, arr.length - 1);
+//        System.out.println(Arrays.toString(arr));
 //    }
 }
