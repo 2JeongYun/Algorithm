@@ -1,4 +1,5 @@
 package HackerRank;
+
 import java.io.*;
 import java.math.*;
 import java.security.*;
@@ -11,24 +12,60 @@ public class FraudulentActivityNotifications {
 
     // Complete the activityNotifications function below.
     static int activityNotifications(int[] expenditure, int d) {
+        int[] expends = Arrays.copyOfRange(expenditure, 0, d);
+        Arrays.sort(expends);
         int noticeCnt = 0;
 
         for (int i = d; i < expenditure.length; i++) {
-            int[] temp = Arrays.copyOfRange(expenditure, i - d, i);
-
             double mid;
+            int midIdx = expends.length / 2;
+            int cur = expenditure[i];
             if (d % 2 == 0) {
-                mid = (double) (temp[d / 2] + temp[(d / 2) - 1]) / 2;
+                mid = (double) (expends[midIdx - 1] + expends[midIdx]) / 2;
             } else {
-                mid = temp[d / 2];
+                mid = (double) expends[midIdx];
             }
 
-            if ((double) expenditure[i] >= (mid * 2)) {
+            if (cur >= mid * 2) {
                 noticeCnt++;
             }
+
+            mySort(expends, expenditure[i - d], cur);
         }
 
         return noticeCnt;
+    }
+
+    static void mySort(int[] arr, int outData, int inData) {
+        int removeIdx = Arrays.binarySearch(arr, outData);
+        int addIdx = findAddIdx(arr, 0, arr.length - 1, inData);
+
+        if (removeIdx < addIdx) {
+            for (int i = removeIdx; i < addIdx; i++) {
+                arr[i] = arr[i + 1];
+            }
+        } else if (removeIdx > addIdx) {
+            for (int i = removeIdx; i > addIdx; i--) {
+                arr[i] = arr[i - 1];
+            }
+        }
+        arr[addIdx] = inData;
+    }
+
+    static int findAddIdx(int[] arr, int s, int e, int inData) {
+        if (s == e) {
+            return s;
+        }
+        int midIdx = (s + e) / 2;
+        int ret = -1;
+        if (arr[midIdx] > inData) {
+            ret = findAddIdx(arr, s, midIdx, inData);
+        } else if (arr[midIdx] < inData) {
+            ret = findAddIdx(arr, midIdx + 1, e, inData);
+        } else {
+            return midIdx;
+        }
+        return ret;
     }
 
     private static final Scanner scanner = new Scanner(System.in);
@@ -62,4 +99,3 @@ public class FraudulentActivityNotifications {
         scanner.close();
     }
 }
-
