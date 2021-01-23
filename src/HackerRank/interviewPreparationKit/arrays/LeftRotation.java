@@ -1,4 +1,4 @@
-package HackerRank;
+package hackerRank.interviewPreparationKit.arrays;
 
 import java.io.*;
 import java.util.*;
