@@ -34,6 +34,9 @@ class MovingBlock {
             YX leftUp = robot.getLeftUp();
             int axis = robot.getAxis();
 
+            if (visit[leftUp.y][leftUp.x][axis]) {
+                continue;
+            }
             visit[leftUp.y][leftUp.x][axis] = true;
 
             for (int d = 0; d < dx.length; d++) {
