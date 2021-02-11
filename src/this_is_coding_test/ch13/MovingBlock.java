@@ -1,55 +1,54 @@
 package this_is_coding_test.ch13;
 
-import java.util.ArrayList;
-
 import java.util.*;
 
 class MovingBlock {
-    static final int[] dx = {0, 1, 0, -1};
-    static final int[] dy = {1, 0, -1, 0};
     static final int HORIZON = 0;
     static final int VERTICAL = 1;
 
-    public Location location = new Location(0, 0);
+    static final int[] dx = {0, 1, 0, -1};
+    static final int[] dy = {1, 0, -1, 0};
 
     public int solution(int[][] board) {
-        int[][] map = new int[board.length + 2][board.length + 2];
-        for (int i = 0; i < map.length; i++) {
-            for (int j = 0; j < map.length; j++) {
-                if (i == 0 || j == 0 || i == map.length - 1 || j == map.length - 1) {
-                    map[i][j] = 1;
+        int mapSize = board.length + 2;
+        int[][] map = new int[mapSize][mapSize];
+        for (int y = 0; y < mapSize; y++) {
+            for (int x = 0; x < mapSize; x++) {
+                if (y == 0 || x == 0 || y == mapSize - 1 || x == mapSize - 1) {
+                    map[y][x] = 1;
                 } else {
-                    map[i][j] = board[i - 1][j - 1];
+                    map[y][x] = board[y - 1][x - 1];
                 }
             }
         }
 
+        boolean[][][] visit = new boolean[mapSize][mapSize][2];
+        YX endPoint = new YX(board.length, board.length);
+
+        Robot robot = new Robot(new YX(1, 1), new YX(1, 2), 0);
         Queue<Robot> que = new LinkedList<>();
-        Robot robot = new Robot(new Location(1, 1), new Location(2, 1), 0);
         que.add(robot);
 
-        Location end = new Location(board.length, board.length);
-
-        boolean[][][] visit = new boolean[map.length][map.length][2];
-
-        while (que.isEmpty() == false && robot.isArrive(end) == false) {
+        while (!que.isEmpty() && !robot.isArrive(endPoint)) {
             robot = que.poll();
-            Location base = robot.getBase();
-            visit[base.y][base.x][robot.getAxis()] = true;
+            YX leftUp = robot.getLeftUp();
+            int axis = robot.getAxis();
+
+            visit[leftUp.y][leftUp.x][axis] = true;
 
             for (int d = 0; d < dx.length; d++) {
-                Location dl = new Location(dx[d], dy[d]);
-
-                Robot tempBot = robot.getMovedBot(map, visit, dl);
-                if (tempBot != null) {
-                    que.add(tempBot);
+                YX part1 = new YX(robot.part1.y + dy[d], robot.part1.x + dx[d]);
+                YX part2 = new YX(robot.part2.y + dy[d], robot.part2.x + dx[d]);
+                Robot candBot = new Robot(part1, part2, robot.time + 1);
+                if (candBot.canExist(map) && !candBot.isVisit(visit)) {
+                    que.add(candBot);
                 }
             }
 
             for (int r = 0; r < 4; r++) {
-                Robot tempBot = robot.getRotatedBot(map, visit, r);
-                if (tempBot != null) {
-                    que.add(tempBot);
+                Robot candBot = robot.getRotatedBot(map, visit, r);
+                if (candBot != null) {
+                    que.add(candBot);
                 }
             }
         }
@@ -57,132 +56,126 @@ class MovingBlock {
         return robot.time;
     }
 
+    class YX {
+        int y;
+        int x;
+
+        YX(int y, int x) {
+            this.y = y;
+            this.x = x;
+        }
+
+        public int getAxis(YX other) {
+            return (this.y == other.y) ? HORIZON : VERTICAL;
+        }
+
+        public YX getLeftUp(YX other) {
+            return (this.x < other.x || this.y < other.y) ? this : other;
+        }
+
+        public boolean isEqual(YX other) {
+            return (this.x == other.x && this.y == other.y);
+        }
+    }
+
     class Robot {
-        Location part1;
-        Location part2;
+        YX part1;
+        YX part2;
         int time;
 
-        Robot (Location part1, Location part2, int time) {
+        Robot(YX part1, YX part2, int time) {
             this.part1 = part1;
             this.part2 = part2;
             this.time = time;
         }
 
-        public boolean isArrive(Location end) {
-            return (part1.isEqual(end) || part2.isEqual(end));
+        public boolean canExist(int[][] map) {
+            return (map[part1.y][part1.x] == 0 && map[part2.y][part2.x] == 0);
         }
 
-        public Robot getMovedBot(int[][] map, boolean[][][] visit, Location dl) {
-            Location movedPart1 = location.getAdd(part1, dl);
-            Location movedPart2 = location.getAdd(part2, dl);
-
-            if (canExist(map, visit, movedPart1, movedPart2)) {
-                return new Robot(movedPart1, movedPart2, time + 1);
-            }
-
-            return null;
+        public boolean isVisit(boolean[][][] visit) {
+            int axis = part1.getAxis(part2);
+            YX leftUp = part1.getLeftUp(part2);
+            return visit[leftUp.y][leftUp.x][axis];
         }
 
-        public Robot getRotatedBot(int[][] map, boolean[][][] visit, int rotate) {
-            Location rotatedPart1 = null;
-            Location rotatedPart2 = null;
-            if (location.getAxis(part1, part2) == HORIZON) {
-                switch (rotate) {
-                    case 0:
-                        rotatedPart1 = part1;
-                        rotatedPart2 = new Location(part1.y + 1, part1.x);
-                        break;
-                    case 1:
-                        rotatedPart1 = part1;
-                        rotatedPart2 = new Location(part1.y - 1, part1.x);
-                        break;
-                    case 2:
-                        rotatedPart1 = new Location(part2.y + 1, part2.x);
-                        rotatedPart2 = part2;
-                        break;
-                    case 3:
-                        rotatedPart1 = new Location(part2.y - 1, part2.x);
-                        rotatedPart2 = part2;
-                        break;
-                }
-            } else {
-                switch (rotate) {
-                    case 0:
-                        rotatedPart1 = part1;
-                        rotatedPart2 = new Location(part1.y, part1.x + 1);
-                        break;
-                    case 1:
-                        rotatedPart1 = part1;
-                        rotatedPart2 = new Location(part1.y, part1.x - 1);
-                        break;
-                    case 2:
-                        rotatedPart1 = new Location(part2.y, part2.x + 1);
-                        rotatedPart2 = part2;
-                        break;
-                    case 3:
-                        rotatedPart1 = new Location(part2.y, part2.x - 1);
-                        rotatedPart2 = part2;
-                        break;
-                }
-            }
-
-            Location diagonal;
-            if (rotatedPart1.isEqual(part1)) {
-                Location sum = location.getAdd(part2, rotatedPart2);
-                diagonal = new Location(sum.x - part1.x, sum.y - part1.y);
-            } else {
-                Location sum = location.getAdd(part1, rotatedPart1);
-                diagonal = new Location(sum.x - part2.x, sum.y - part2.y);
-            }
-
-            System.out.printf("%d %d\n", diagonal.y, diagonal.x);
-            if (canExist(map, visit, rotatedPart1, rotatedPart2) && map[diagonal.y][diagonal.x] == 0) {
-                return new Robot(rotatedPart1, rotatedPart2, time + 1);
-            }
-            return null;
-        }
-
-        private boolean canExist(int[][] map, boolean[][][] visit, Location part1, Location part2) {
-            if (map[part1.y][part1.x] == 0 && map[part2.y][part2.x] == 0) {
-                Location base = location.getBase(part1, part2);
-                if (!visit[base.y][base.x][location.getAxis(part1, part2)]) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        public Location getBase() {
-            return location.getBase(part1, part2);
+        public boolean isArrive(YX endPoint) {
+            return (part1.isEqual(endPoint) || part2.isEqual(endPoint));
         }
 
         public int getAxis() {
-            return location.getAxis(part1, part2);
-        }
-    }
-
-    class Location {
-        int x;
-        int y;
-        Location(int x, int y) {
-            this.x = x;
-            this.y = y;
+            return part1.getAxis(part2);
         }
 
-        public Location getAdd(Location a, Location b) {
-            return new Location(a.x + b.x, a.y + b.y);
+        public YX getLeftUp() {
+            return part1.getLeftUp(part2);
         }
 
-        public Location getBase(Location a, Location b) {
-            return (a.x < b.x || a.y < b.y) ? a : b;
-        }
+        public Robot getRotatedBot(int[][] map, boolean[][][] visit, int rotate) {
+            int axis = part1.getAxis(part2);
+            YX rotatedPart1 = null, rotatedPart2 = null;
 
-        public int getAxis(Location a, Location b) {
-            return (a.y == b.y) ? HORIZON : VERTICAL;
-        }
+            if (axis == HORIZON) {
+                switch (rotate) {
+                    case 0:
+                        rotatedPart1 = part1;
+                        rotatedPart2 = new YX(part1.y + 1, part1.x);
+                        break;
+                    case 1:
+                        rotatedPart1 = part1;
+                        rotatedPart2 = new YX(part1.y - 1, part1.x);
+                        break;
+                    case 2:
+                        rotatedPart1 = new YX(part2.y + 1, part2.x);
+                        rotatedPart2 = part2;
+                        break;
+                    case 3:
+                        rotatedPart1 = new YX(part2.y - 1, part2.x);
+                        rotatedPart2 = part2;
+                        break;
+                }
+            } else {
+                switch (rotate) {
+                    case 0:
+                        rotatedPart1 = part1;
+                        rotatedPart2 = new YX(part1.y, part1.x + 1);
+                        break;
+                    case 1:
+                        rotatedPart1 = part1;
+                        rotatedPart2 = new YX(part1.y, part1.x - 1);
+                        break;
+                    case 2:
+                        rotatedPart1 = new YX(part2.y, part2.x + 1);
+                        rotatedPart2 = part2;
+                        break;
+                    case 3:
+                        rotatedPart1 = new YX(part2.y, part2.x - 1);
+                        rotatedPart2 = part2;
+                        break;
+                }
+            }
 
-        public boolean isEqual(Location other) {
-            return (x == other.x && y == other.y);
+            int diagonalY = 0, diagonalX = 0;
+            int sumY = 0, sumX = 0;
+            if (rotatedPart1.isEqual(part1)) {
+                sumY = part2.y + rotatedPart2.y;
+                sumX = part2.x + rotatedPart2.x;
+                diagonalY = sumY - part1.y;
+                diagonalX = sumX - part1.x;
+            } else {
+                sumY = part1.y + rotatedPart1.y;
+                sumX = part1.x + rotatedPart1.x;
+                diagonalY = sumY - part2.y;
+                diagonalX = sumX - part2.x;
+            }
+
+            if (map[diagonalY][diagonalX] == 0) {
+                Robot candBot = new Robot(rotatedPart1, rotatedPart2, time + 1);
+                if (candBot.canExist(map) && !candBot.isVisit(visit)) {
+                    return candBot;
+                }
+            }
+            return null;
         }
     }
 }
