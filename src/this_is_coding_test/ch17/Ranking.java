@@ -7,6 +7,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
 
+/*
+플루이드 워셜 알고리즘을 사용하여 더 간단하게 풀 수 있다.
+아래의 코드는 플루이드 워셜 알고리즘을 생각하기 전에 짠 것으로
+코드는 복잡하지만 시간 복잡도는 같은 O(n^3)이다.
+ */
+
 public class Ranking {
     public void solution() throws IOException {
         BufferedReader br = new BufferedReader(new FileReader("./src/this_is_coding_test/ch17/input.txt"));
