@@ -3,7 +3,7 @@ package codeforces.round706div2;
 import java.io.*;
 import java.util.*;
 
-public class B {
+public class B_MaxAndMex {
     final int MAX = 1000000001;
     public void solution() throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -83,7 +83,7 @@ public class B {
     }
 
     public static void main(String[] args) throws IOException {
-        B p = new B();
+        B_MaxAndMex p = new B_MaxAndMex();
         p.solution();
     }
 }

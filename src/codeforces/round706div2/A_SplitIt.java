@@ -3,7 +3,7 @@ package codeforces.round706div2;
 import java.io.*;
 import java.util.StringTokenizer;
 
-public class A {
+public class A_SplitIt {
     public void solution() throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
@@ -44,7 +44,7 @@ public class A {
     }
 
     public static void main(String[] args) throws IOException {
-        A p = new A();
+        A_SplitIt p = new A_SplitIt();
         p.solution();
     }
 }

@@ -3,7 +3,7 @@ package codeforces.round706div2;
 import java.io.*;
 import java.util.StringTokenizer;
 
-public class E {
+public class E_GardenOfTheSun {
 
     public void solution() throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -79,7 +79,7 @@ public class E {
     }
 
     public static void main(String[] args) throws IOException {
-        E p = new E();
+        E_GardenOfTheSun p = new E_GardenOfTheSun();
         p.solution();
     }
 }

@@ -4,7 +4,7 @@ import java.io.*;
 import java.util.Arrays;
 import java.util.StringTokenizer;
 
-public class D {
+public class D_LetsGoHiking {
     public void solution() throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
@@ -80,7 +80,7 @@ public class D {
     }
 
     public static void main(String[] args) throws IOException {
-        D p = new D();
+        D_LetsGoHiking p = new D_LetsGoHiking();
         p.solution();
     }
 }

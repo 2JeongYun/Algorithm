@@ -4,7 +4,7 @@ import java.io.*;
 import java.util.PriorityQueue;
 import java.util.StringTokenizer;
 
-public class C {
+public class C_DiamondMiner {
     public void solution() throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
@@ -46,7 +46,7 @@ public class C {
     }
 
     public static void main(String[] args) throws IOException {
-        C p = new C();
+        C_DiamondMiner p = new C_DiamondMiner();
         p.solution();
     }
 }

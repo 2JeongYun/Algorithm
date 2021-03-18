@@ -3,7 +3,7 @@ package codeforces.round707div2;
 import java.io.*;
 import java.util.*;
 
-public class C {
+public class C_GoingHome {
     public void solution() throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
@@ -62,7 +62,7 @@ public class C {
     }
 
     public static void main(String[] args) throws IOException {
-        C p = new C();
+        C_GoingHome p = new C_GoingHome();
         p.solution();
     }
 }

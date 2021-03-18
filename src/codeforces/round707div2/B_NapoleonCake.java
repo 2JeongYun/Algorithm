@@ -1,10 +1,9 @@
 //package codeforces.round707div2;
 
 import java.io.*;
-import java.util.Arrays;
 import java.util.StringTokenizer;
 
-public class B {
+public class B_NapoleonCake {
     public void solution() throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
@@ -64,7 +63,7 @@ public class B {
     }
 
     public static void main(String[] args) throws IOException {
-        B p = new B();
+        B_NapoleonCake p = new B_NapoleonCake();
         p.solution();
     }
 }
