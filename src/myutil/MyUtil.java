@@ -3,7 +3,6 @@ package myutil;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.StringTokenizer;
 
 public class MyUtil {
@@ -155,9 +154,75 @@ public class MyUtil {
         }
     }
 
-//    public static void main(String[] args) {
-//        int[] arr = {5, 4, 3, 2, 1, -1, 5, 6, 10, 0};
-//        mergeSort(arr, 0, arr.length - 1);
-//        System.out.println(Arrays.toString(arr));
-//    }
+    public static int gcd(int a, int b) {
+        if (a == b) {
+            return a;
+        } else if (a == 0 && b == 0) {
+            return 1;
+        } else if (a == 0 || b == 0) {
+            return (a > b) ? a : b;
+        }
+
+        int big, small;
+        if (a > b) {
+            big = a;
+            small = b;
+        } else {
+            big = b;
+            small = a;
+        }
+
+        int r;
+        while ((r = big % small) != 0) {
+            big = small;
+            small = r;
+        }
+        return small;
+    }
+
+    public static int lcm(int a, int b) {
+        int gcd = gcd(a, b);
+        return (a * b) / gcd;
+    }
+
+    public static ArrayList<Integer> primes(int max) {
+        boolean[] number = new boolean[max + 1];
+        ArrayList<Integer> ret = new ArrayList<>();
+
+        for (int i = 2; i <= (int) Math.sqrt(max); i++) {
+            if (number[i] == false) {
+                number[i] = true;
+                ret.add(i);
+
+                for (int j = i; j <= max; j += i) {
+                    number[j] = true;
+                }
+            }
+        }
+        for (int i = (int) Math.sqrt(max) + 1; i <= max; i++) {
+            if (number[i] == false) {
+                ret.add(i);
+            }
+        }
+
+        return ret;
+    }
+
+    public static boolean isPrime(int num) {
+        for (int i = 2; i < Math.sqrt(num); i++) {
+            if (num % i == 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+
+
+    public static void main(String[] args) {
+        System.out.println(gcd(3, 6));
+        System.out.println(lcm(10, 5));
+        System.out.println(primes(111));
+        System.out.println(isPrime(111));
+    }
 }
