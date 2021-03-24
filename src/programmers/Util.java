@@ -64,7 +64,7 @@ public class Util {
         int[] ret = new int[stringArrayList.size()];
 
         for (int i = 0; i < ret.length; i++) {
-            ret[i] = Integer.parseInt(stringArrayList.get(i));
+            ret[i] = Integer.parseInt(stringArrayList.get(i).trim());
         }
 
         return ret;
@@ -75,7 +75,18 @@ public class Util {
         long[] ret = new long[stringArrayList.size()];
 
         for (int i = 0; i < ret.length; i++) {
-            ret[i] = Long.parseLong(stringArrayList.get(i));
+            ret[i] = Long.parseLong(stringArrayList.get(i).trim());
+        }
+
+        return ret;
+    }
+
+    public static double[] getDoubleArray() {
+        ArrayList<String> stringArrayList = makeArrayList();
+        double[] ret = new double[stringArrayList.size()];
+
+        for (int i = 0; i < ret.length; i++) {
+            ret[i] = Double.parseDouble(stringArrayList.get(i).trim());
         }
 
         return ret;
@@ -91,17 +102,6 @@ public class Util {
 
         for (int i = 0; i < ret.length; i++) {
             ret[i] = stringArrayList.get(i).charAt(0);
-        }
-
-        return ret;
-    }
-
-    public static double[] getDoubleArray() {
-        ArrayList<String> stringArrayList = makeArrayList();
-        double[] ret = new double[stringArrayList.size()];
-
-        for (int i = 0; i < ret.length; i++) {
-            ret[i] = Double.parseDouble(stringArrayList.get(i));
         }
 
         return ret;
