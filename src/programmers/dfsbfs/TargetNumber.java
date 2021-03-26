@@ -1,9 +1,8 @@
 package programmers.dfsbfs;
 
-import static programmers.Util.*;
+import static myutil.Util.*;
 
 import java.io.IOException;
-import java.util.*;
 
 public class TargetNumber {
 

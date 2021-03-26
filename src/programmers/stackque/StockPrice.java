@@ -1,8 +1,6 @@
 package programmers.stackque;
 
-import programmers.Util;
-
-import static programmers.Util.*;
+import static myutil.Util.*;
 
 import java.util.*;
 

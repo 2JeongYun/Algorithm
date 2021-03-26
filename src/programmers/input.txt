@@ -1,0 +1,3 @@
+2
+[["ICN", "JFK"], ["HND", "IAD"], ["JFK", "HND"]]
+[["ICN", "SFO"], ["ICN", "ATL"], ["SFO", "ATL"], ["ATL", "ICN"], ["ATL","SFO"]]

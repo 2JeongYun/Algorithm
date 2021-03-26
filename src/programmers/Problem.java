@@ -1,7 +1,9 @@
 package programmers;
 
-//import static programmers.Util.*;
+//import static myutil.Util.*;
 //import java.util.*;
+
+import myutil.Util;
 
 public class Problem {
 
@@ -19,5 +21,7 @@ public class Problem {
              * print(p.solution());
              */
         }
+
+        Util.closeUtil();
     }
 }

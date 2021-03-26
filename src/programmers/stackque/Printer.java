@@ -1,6 +1,6 @@
 package programmers.stackque;
 
-import static programmers.Util.*;
+import static myutil.Util.*;
 
 import java.io.IOException;
 import java.util.*;
