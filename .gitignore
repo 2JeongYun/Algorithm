@@ -1,5 +1,11 @@
-.idea/*
+out/
+gradle/
+idea/
+build/
+.gradle/
+.idea/
+*.txt
+*.iml
+*.ipr
+*.iws
 
-Algorithm.iml
-
-out/*
